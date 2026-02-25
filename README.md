@@ -2,7 +2,7 @@
 
 **A suite of lightweight, web-based tools designed to streamline IT procurement, onboarding, and offboarding workflows.**
 
-This toolkit was developed to solve common administrative bottlenecks in IT departments. Originally created to automate manual documentation during my professional tenure, these tools replace messy spreadsheets and paper forms with clean, standardized, and professional PDF reports.
+This toolkit was developed to solve common administrative bottlenecks in my IT departments. Originally created to automate manual documentation during my professional tenure at TMS Sdn Bhd. these tools replace messy spreadsheets and paper forms with clean, standardized, and professional PDF reports.
 
 ---
 
@@ -55,19 +55,6 @@ Across all tools, the focus was on **zero-dependency portability** and **speed**
 * **PDF Generation:** `jsPDF` & `jsPDF-AutoTable`.
 * **Icons:** Lucide Icons.
 * **Deployment:** Fully client-side; can be run locally or hosted via GitHub Pages/Vercel with no database required.
-
----
-
-## 🚀 Usage & Deployment
-
-### Local Execution
-
-1. Clone the repository: `git clone https://github.com/yourusername/it-toolkit.git`
-2. Open the respective `.html` file in any modern web browser.
-
-### Online Deployment
-
-Since these tools require no backend, simply connect your repository to **Vercel**, **Netlify**, or **GitHub Pages** for instant deployment.
 
 ---
 
