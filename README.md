@@ -2,7 +2,7 @@
 
 **A suite of lightweight, web-based tools designed to streamline IT procurement, onboarding, and offboarding workflows.**
 
-This toolkit was developed to solve common administrative bottlenecks in my IT departments. Originally created to automate manual documentation during my professional tenure at TMS Sdn Bhd. these tools replace messy spreadsheets and paper forms with clean, standardized, and professional PDF reports.
+This toolkit was developed to solve common administrative bottlenecks in my IT departments. Originally created to automate manual documentation during my professional tenure at Total Metering Solution Sdn Bhd. These tools replace messy spreadsheets and paper forms with clean, standardized, and professional PDF reports.
 
 ---
 
