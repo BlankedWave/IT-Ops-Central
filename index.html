@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Ops Central | Systems Launcher</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2092/2092663.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%; /* Ensure all cards are same height */
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card:active {
+            transform: translateY(0px) scale(0.98);
+        }
+
+        .glow-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .system-title {
+            background: linear-gradient(135deg, #f8fafc 30%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .loading-active {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="glow-bg"></div>
+
+    <div class="container max-w-7xl mx-auto">
+        <header class="text-center mb-16 animate__animated animate__fadeIn">
+            <h1 class="text-5xl font-extrabold tracking-tighter system-title mb-3">IT-OPS CENTRAL</h1>
+            <div class="flex items-center justify-center gap-3">
+                <span class="h-[1px] w-8 bg-slate-700"></span>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.4em]">Secure Gateway</p>
+                <span class="h-[1px] w-8 bg-slate-700"></span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate__animated animate__fadeInUp">
+            
+            <div onclick="launch('repo/pc.html', this)" role="button" aria-label="Launch Procurement Comparison" 
+                 class="glass-card p-8 rounded-[2rem] flex flex-col items-center text-center group cursor-pointer">
+                <div class="w-16 h-16 bg-violet-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-violet-500/20 group-hover:rotate-3 transition-all duration-300">
+                    <i data-lucide="bar-chart-3" class="text-violet-400 w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">IT-PC</h2>
+                <p class="text-slate-400 text-sm mb-8 flex-grow">Procurement Comparison & Analysis Tool</p>
+                <button class="btn-launch btn btn-md btn-block bg-violet-600 hover:bg-violet-500 text-white border-none rounded-xl shadow-lg shadow-violet-900/20">
+                    Launch
+                </button>
+            </div>
+
+            <div onclick="launch('repo/nac.html', this)" role="button" aria-label="Launch New Asset Checklist"
+                 class="glass-card p-8 rounded-[2rem] flex flex-col items-center text-center group cursor-pointer">
+                <div class="w-16 h-16 bg-sky-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-sky-500/20 group-hover:rotate-3 transition-all duration-300">
+                    <i data-lucide="package-plus" class="text-sky-400 w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">IT-NAC</h2>
+                <p class="text-slate-400 text-sm mb-8 flex-grow">New Asset Receipt & Checklist</p>
+                <button class="btn-launch btn btn-md btn-block bg-sky-500 hover:bg-sky-400 text-white border-none rounded-xl shadow-lg shadow-sky-900/20">
+                    Launch
+                </button>
+            </div>
+
+            <div onclick="launch('repo/nsc.html', this)" role="button" aria-label="Launch New Staff Onboarding"
+                 class="glass-card p-8 rounded-[2rem] flex flex-col items-center text-center group cursor-pointer">
+                <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:rotate-3 transition-all duration-300">
+                    <i data-lucide="user-plus" class="text-emerald-400 w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">IT-NSC</h2>
+                <p class="text-slate-400 text-sm mb-8 flex-grow">New Staff Onboarding Checklist</p>
+                <button class="btn-launch btn btn-md btn-block bg-emerald-600 hover:bg-emerald-500 text-white border-none rounded-xl shadow-lg shadow-emerald-900/20">
+                    Launch
+                </button>
+            </div>
+
+            <div onclick="launch('repo/rsc.html', this)" role="button" aria-label="Launch Staff Offboarding"
+                 class="glass-card p-8 rounded-[2rem] flex flex-col items-center text-center group cursor-pointer">
+                <div class="w-16 h-16 bg-rose-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500/20 group-hover:rotate-3 transition-all duration-300">
+                    <i data-lucide="user-minus" class="text-rose-400 w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">IT-RSC</h2>
+                <p class="text-slate-400 text-sm mb-8 flex-grow">Staff Offboarding & Retrieval</p>
+                <button class="btn-launch btn btn-md btn-block bg-rose-600 hover:bg-rose-500 text-white border-none rounded-xl shadow-lg shadow-rose-900/20">
+                    Launch
+                </button>
+            </div>
+
+        </div>
+
+        <footer class="mt-20 text-center opacity-30 text-xs tracking-widest uppercase">
+            &copy; 2026 Internal IT Operations Port
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        function launch(url, card) {
+            const btn = card.querySelector('.btn-launch');
+            
+            // Visual Loading State
+            card.classList.add('loading-active');
+            
+            if (!btn.getAttribute('data-original-text')) {
+                btn.setAttribute('data-original-text', btn.innerText);
+            }
+            
+            btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span>';
+            btn.disabled = true;
+            
+            // Simulated delay for UI feedback
+            setTimeout(() => {
+                window.location.href = url;
+            }, 600);
+        }
+        
+        // Reset page state if user clicks "Back" browser button
+        window.addEventListener('pageshow', (event) => {
+            document.querySelectorAll('.glass-card').forEach(c => c.classList.remove('loading-active'));
+            document.querySelectorAll('.btn-launch').forEach(b => {
+                b.disabled = false;
+                const original = b.getAttribute('data-original-text');
+                if (original) b.innerHTML = original;
+            });
+        });
+    </script>
+</body>
+</html>
