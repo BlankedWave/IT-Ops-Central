@@ -8,6 +8,8 @@
     <!-- Tailwind CSS & DaisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <!-- jsPDF and AutoTable for direct download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -102,9 +104,9 @@
 <nav class="fixed top-0 left-0 w-full p-4 z-50">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
         <a href="../index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 hover:bg-slate-200/70 border border-slate-200 transition-all group shadow-sm">
-    <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
-    <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
-</a>
+            <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
+            <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
+        </a>
         
         <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
             <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">System Active</span>
@@ -112,13 +114,7 @@
     </div>
 </nav>
 
-<div class="pt-24"> 
-    </div>
-
-<script>
-    // Ensure Lucide icons render on the sub-pages too
-    lucide.createIcons();
-</script>
+<div class="pt-24"></div>
     
     <div class="flex flex-col lg:flex-row flex-grow overflow-hidden">
         
@@ -127,7 +123,8 @@
             <div class="flex flex-col gap-4 mb-8">
                 <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">IT Form (New Staff)</h1>
                 <div class="grid grid-cols-1 gap-2">
-                    <button onclick="downloadDirectPDF()" class="btn btn-primary w-full shadow-lg">
+                    <!-- Changed button color to green (btn-success) -->
+                    <button onclick="downloadDirectPDF()" class="btn btn-success text-white w-full shadow-lg hover:brightness-110">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Download PDF
                     </button>
@@ -139,7 +136,8 @@
                 <!-- Employee -->
                 <div class="collapse collapse-arrow join-item border border-base-300 bg-base-100">
                     <input type="radio" name="editor-panels" checked="checked" /> 
-                    <div class="collapse-title font-bold text-sm uppercase text-primary">Employee Details</div>
+                    <!-- Changed label color to success/green -->
+                    <div class="collapse-title font-bold text-sm uppercase text-success">Employee Details</div>
                     <div class="collapse-content space-y-3 pt-4">
                         <div class="form-control">
                             <label class="label p-1"><span class="label-text text-xs">Company Name</span></label>
@@ -373,6 +371,9 @@
     </footer>
 
     <script>
+        // Ensure Lucide icons render
+        lucide.createIcons();
+
         // Set Default Date as Current Date
         document.getElementById('in-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('footer-year').innerText = new Date().getFullYear();

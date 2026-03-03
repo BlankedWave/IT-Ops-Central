@@ -109,7 +109,7 @@
         </a>
         
         <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
-            <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">System Active</span>
+            <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">IT Dept</span>
         </div>
     </div>
 </nav>
@@ -123,7 +123,6 @@
             <div class="flex flex-col gap-4 mb-8">
                 <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">IT Form (New Staff)</h1>
                 <div class="grid grid-cols-1 gap-2">
-                    <!-- Changed button color to green (btn-success) -->
                     <button onclick="downloadDirectPDF()" class="btn btn-success text-white w-full shadow-lg hover:brightness-110">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Download PDF
@@ -136,7 +135,6 @@
                 <!-- Employee -->
                 <div class="collapse collapse-arrow join-item border border-base-300 bg-base-100">
                     <input type="radio" name="editor-panels" checked="checked" /> 
-                    <!-- Changed label color to success/green -->
                     <div class="collapse-title font-bold text-sm uppercase text-success">Employee Details</div>
                     <div class="collapse-content space-y-3 pt-4">
                         <div class="form-control">
@@ -256,23 +254,23 @@
                     <table class="form-table">
                         <tr>
                             <td width="35%" class="bg-slate-50 font-bold text-[9pt]">COMPANY NAME:</td>
-                            <td id="pv-company" class="font-bold text-[10pt]"></td>
+                            <td id="pv-company" class="font-bold text-[10pt] text-maroon"></td>
                         </tr>
                         <tr>
                             <td class="bg-slate-50 font-bold text-[9pt]">STAFF NAME:</td>
-                            <td id="pv-name" class="font-bold text-[10pt]"></td>
+                            <td id="pv-name" class="font-bold text-[10pt] text-maroon"></td>
                         </tr>
                         <tr>
                             <td class="bg-slate-50 font-bold text-[9pt]">STAFF ID:</td>
-                            <td id="pv-id" class="font-bold text-[10pt]"></td>
+                            <td id="pv-id" class="font-bold text-[10pt] text-maroon"></td>
                         </tr>
                         <tr>
                             <td class="bg-slate-50 font-bold text-[9pt]">DEPARTMENT:</td>
-                            <td id="pv-dept" class="font-bold text-[10pt]"></td>
+                            <td id="pv-dept" class="font-bold text-[10pt] text-maroon"></td>
                         </tr>
                         <tr>
                             <td class="bg-slate-50 font-bold text-[9pt]">DESIGNATION:</td>
-                            <td id="pv-desig" class="font-bold text-[10pt]"></td>
+                            <td id="pv-desig" class="font-bold text-[10pt] text-maroon"></td>
                         </tr>
                     </table>
                 </div>
@@ -387,9 +385,8 @@
                 if (inputEl && previewEl) {
                     let val = (inputEl.value || "").toUpperCase();
                     previewEl.innerText = val;
-                    if (f === 'asset') {
-                        previewEl.classList.add('text-maroon');
-                    }
+                    // Apply maroon color for all user-filled fields including employee details
+                    previewEl.classList.add('text-maroon');
                 }
             });
             
@@ -456,7 +453,10 @@
                 body: empRows,
                 theme: 'grid',
                 styles: { fontSize: 9, cellPadding: 2, textColor: 0, lineColor: 0, lineWidth: 0.1 },
-                columnStyles: { 0: { cellWidth: 50, fontStyle: 'bold', fillColor: [245, 245, 245] } }
+                columnStyles: { 
+                    0: { cellWidth: 50, fontStyle: 'bold', fillColor: [245, 245, 245] },
+                    1: { textColor: [192, 0, 0], fontStyle: 'bold' } // Color #c00000 for user input
+                }
             });
 
             // 3. New Staff Procedure
