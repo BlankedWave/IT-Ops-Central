@@ -14,8 +14,9 @@
         body {
             font-family: Arial, Helvetica, sans-serif;
             background-color: #f0f2f5;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Combined Static Top Nav */
@@ -101,20 +102,20 @@
 
         .description-box {
             border: 1px solid black;
-            height: 160px; /* Increased height to cover empty space */
+            height: 160px;
             padding: 10px;
             font-size: 9pt;
             white-space: pre-wrap;
             word-break: break-word;
             color: #b91c1c;
             font-weight: bold;
-            overflow: hidden; /* Clip if too long */
-            text-transform: uppercase; /* Auto caps lock for the summary box */
+            overflow: hidden;
+            text-transform: uppercase; 
         }
 
         .proof-slot {
             border: 1px dashed #444;
-            height: 130px; /* Increased height */
+            height: 130px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -144,7 +145,8 @@
 
         @media print {
             .no-print { display: none !important; }
-            #pdf-content { box-shadow: none; margin: 0; }
+            #pdf-content { box-shadow: none; margin: 0; border: none; }
+            body { background: white; }
         }
     </style>
 </head>
@@ -249,7 +251,7 @@
 
             <section class="border-t pt-4">
                 <h3 class="text-xs font-bold text-red-600 mb-2 uppercase">IT Admin</h3>
-                <input type="text" id="in-ticket" placeholder="Ticket #" class="input input-sm input-bordered w-full mb-2" oninput="sync()">
+                <input type="text" id="in-ticket" placeholder="Ticket Reference #" class="input input-sm input-bordered w-full mb-2" oninput="sync()">
                 <select id="in-res-path" class="select select-sm select-bordered w-full" onchange="sync()">
                     <option value="">Resolution...</option>
                     <option value="Repair">Repair</option>
@@ -341,8 +343,8 @@
             <div class="p-4 border-2 border-black bg-slate-50 mt-2">
                 <p class="it-only-label">**IT DEPARTMENT USE ONLY**</p>
                 <div class="grid grid-cols-2 gap-4 mt-2">
-                    <p class="font-bold text-[9.5pt]">TICKET REF: #<span id="pv-ticket" class="underline-field px-4"></span></p>
-                    <p class="font-bold text-[9.5pt]">RESOLUTION: <span id="pv-res-path" class="underline-field px-4"></span></p>
+                    <p class="font-bold text-[9pt]">TICKET REFERENCE: # <span id="pv-ticket" class="underline-field px-2"></span></p>
+                    <p class="font-bold text-[9pt]">RESOLUTION: <span id="pv-res-path" class="underline-field px-2"></span></p>
                 </div>
             </div>
 
@@ -354,9 +356,24 @@
     </div>
 </div>
 
+<!-- Web Footer Section -->
+<footer class="w-full bg-white border-t border-slate-200 px-8 py-4 no-print mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-bold tracking-widest text-slate-400">
+        <div>
+            © <span id="footer-year"></span> MUHAMMAD AQIL ISMAIL
+        </div>
+        <div>
+            INTERNAL USE ONLY
+        </div>
+    </div>
+</footer>
+
 <script>
     lucide.createIcons();
     let imageList = []; 
+
+    // Initialize Web Footer Year
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
 
     // Default Date
     document.getElementById('in-date').value = new Date().toISOString().split('T')[0];
@@ -386,8 +403,7 @@
             const inEl = document.getElementById(`in-${f}`);
             const pvEl = document.getElementById(`pv-${f}`);
             if (inEl && pvEl) {
-                // Modified to handle auto-caps lock for problem summary via JS as well for the preview text
-                pvEl.innerText = f === 'desc' ? inEl.value.toUpperCase() : inEl.value.toUpperCase();
+                pvEl.innerText = inEl.value.toUpperCase();
             }
         });
 
@@ -466,7 +482,6 @@
         doc.setFontSize(8);
         doc.text('PROBLEM SUMMARY:', 20, descY + 5);
         
-        // Ensure PDF output is uppercase
         const splitDesc = doc.splitTextToSize(document.getElementById('in-desc').value.toUpperCase(), 165);
         doc.rect(20, descY + 7, 170, 40);
         doc.setTextColor(185, 28, 28);
@@ -485,7 +500,7 @@
         }
 
         const impactY = imgY + 48;
-        doc.setFontSize(10); // Match other section labels
+        doc.setFontSize(10);
         doc.text('5. IMPACT & REPLACEMENT', 20, impactY);
         doc.autoTable({
             startY: impactY + 3, margin: 20,
@@ -498,11 +513,11 @@
         doc.setLineWidth(0.5);
         doc.rect(20, adminY, 170, 15);
         doc.setFontSize(7); doc.text('**IT DEPARTMENT USE ONLY**', 22, adminY + 4);
-        doc.setFontSize(9);
-        doc.text('TICKET REFERENCE: #', 25, adminY + 10);
-        doc.setTextColor(185, 28, 28); doc.text(getT('in-ticket'), 50, adminY + 10);
-        doc.setTextColor(0); doc.text('RESOLUTION:', 110, adminY + 10);
-        doc.setTextColor(185, 28, 28); doc.text(getT('in-res-path'), 135, adminY + 10);
+        doc.setFontSize(8);
+        doc.text('TICKET REFERENCE: #', 22, adminY + 10);
+        doc.setTextColor(185, 28, 28); doc.text(getT('in-ticket'), 63, adminY + 10);
+        doc.setTextColor(0); doc.text('RESOLUTION:', 120, adminY + 10);
+        doc.setTextColor(185, 28, 28); doc.text(getT('in-res-path'), 145, adminY + 10);
 
         // Green Footer
         doc.setDrawColor(greenColor[0], greenColor[1], greenColor[2]);
