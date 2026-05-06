@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Asset Damage & Failure Report</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/10819/10819554.png">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f0f2f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Combined Static Top Nav */
+        .static-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        #pdf-content {
+            width: 210mm;
+            height: 297mm; /* Locked to A4 Height */
+            padding: 10mm 15mm;
+            margin: auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            color: black;
+            font-size: 9pt;
+            line-height: 1.2;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent spillover */
+        }
+
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.6rem;
+        }
+
+        .form-table th, .form-table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .header-title {
+            color: #000000; 
+            font-weight: 900;
+            font-size: 14pt;
+            border-bottom: 2px solid #000000;
+            display: inline-block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .section-label {
+            font-weight: 900;
+            text-decoration: underline;
+            margin-bottom: 6px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 10pt;
+        }
+
+        .it-only-label {
+            font-weight: 900;
+            font-style: italic;
+            font-size: 8.5pt;
+            margin-bottom: 4px;
+        }
+
+        .text-filled {
+            color: #b91c1c; 
+            font-weight: bold;
+        }
+
+        .underline-field {
+            border-bottom: 1.5px solid black;
+            padding-bottom: 1px;
+            min-width: 60px;
+            display: inline-block;
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .description-box {
+            border: 1px solid black;
+            height: 160px; /* Increased height to cover empty space */
+            padding: 10px;
+            font-size: 9pt;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #b91c1c;
+            font-weight: bold;
+            overflow: hidden; /* Clip if too long */
+            text-transform: uppercase; /* Auto caps lock for the summary box */
+        }
+
+        .proof-slot {
+            border: 1px dashed #444;
+            height: 130px; /* Increased height */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .proof-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+
+        .footer-line {
+            margin-top: auto;
+            border-top: 1px solid #1fac4b;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            font-weight: bold;
+            color: #1fac4b;
+            padding-bottom: 5mm;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            #pdf-content { box-shadow: none; margin: 0; }
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+
+<!-- Combined Static Navigation Header -->
+<header class="static-nav no-print">
+    <!-- Top Row: Navigation -->
+    <div class="flex items-center justify-between px-6 py-3 border-b border-slate-100 bg-slate-50/50">
+        <a href="../index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 transition-all group shadow-sm">
+            <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
+            <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
+        </a>
+        <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
+            <span class="text-xs font-bold tracking-widest text-sky-500 uppercase">IT Department</span>
+        </div>
+    </div>
+    <!-- Bottom Row: Portal Actions -->
+    <div class="flex items-center justify-between px-6 py-3">
+        <div class="flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-red-600"></i>
+            <span class="text-sm font-black tracking-tight text-slate-800 uppercase">Asset Incident Portal</span>
+        </div>
+        <button onclick="downloadDirectPDF()" class="btn btn-sm btn-error text-white shadow-md">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Generate Report
+        </button>
+    </div>
+</header>
+
+<!-- Main Layout Container -->
+<div class="flex flex-grow overflow-hidden mt-[114px]">
+    <!-- Input Panel (Scrollable) -->
+    <div class="w-full lg:w-80 bg-white p-4 overflow-y-auto border-r no-print flex-shrink-0">
+        <div class="space-y-4 pb-10">
+            <section>
+                <h3 class="text-xs font-bold text-slate-400 mb-2 uppercase">Core Details</h3>
+                <div class="space-y-2">
+                    <input type="text" id="in-company" list="company-options" placeholder="Company" class="input input-sm input-bordered w-full" oninput="sync()">
+                    <datalist id="company-options">
+                        <option value="Total Metering Solution Sdn Bhd">
+                        <option value="TMS Enthu Technology Sdn Bhd">
+                        <option value="TMS Energy Sdn Bhd">
+                        <option value="TMS KJ Distribution Sdn Bhd">
+                        <option value="Broyson Automation Sdn Bhd">
+                        <option value="Well Prestige Sdn Bhd">
+                        <option value="Synergy Instrumentation Sdn Bhd">
+                        <option value="Green Protechnic Sdn Bhd">
+                        <option value="Jamac Metering Sdn Bhd">
+                        <option value="SFG Technology (M) Sdn Bhd">
+                        <option value="Omnipro Industries Sdn Bhd">
+                    </datalist>
+                    <input type="text" id="in-name" placeholder="Reported By" class="input input-sm input-bordered w-full" oninput="sync()">
+                    <input type="text" id="in-dept" placeholder="Department" class="input input-sm input-bordered w-full" oninput="sync()">
+                    <input type="date" id="in-date" class="input input-sm input-bordered w-full" oninput="sync()">
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-xs font-bold text-slate-400 mb-2 uppercase">Hardware</h3>
+                <div class="space-y-2">
+                    <input type="text" id="in-asset" placeholder="Asset Tag" class="input input-sm input-bordered w-full" oninput="sync()">
+                    <input type="text" id="in-model" placeholder="Model" class="input input-sm input-bordered w-full" oninput="sync()">
+                    <input type="text" id="in-sn" placeholder="Serial Number" class="input input-sm input-bordered w-full" oninput="sync()">
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-xs font-bold text-slate-400 mb-2 uppercase">Failure Type</h3>
+                <div class="grid grid-cols-2 gap-1 text-[10px]">
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-physical" onchange="sync()"> Physical</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-power" onchange="sync()"> Power</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-connect" onchange="sync()"> Network</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-io" onchange="sync()"> I/O</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-printer" onchange="sync()"> Printer</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" id="iss-soft" onchange="sync()"> Software</label>
+                </div>
+                <input type="text" id="in-other-issue" placeholder="Other specify" class="input input-xs input-bordered w-full mt-2" oninput="sync()">
+            </section>
+
+            <section>
+                <div class="flex justify-between items-center mb-1">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase">Evidence</h3>
+                    <span id="char-count" class="text-[9px] font-bold text-slate-300">0 / 850</span>
+                </div>
+                <textarea id="in-desc" maxlength="850" class="textarea textarea-bordered w-full h-32 text-xs uppercase" placeholder="Max 850 characters..." oninput="sync()"></textarea>
+                <input type="file" id="in-proof" class="file-input file-input-bordered file-input-xs w-full mt-2" accept="image/*" multiple onchange="handleImages(event)">
+            </section>
+
+            <section>
+                <h3 class="text-xs font-bold text-slate-400 mb-2 uppercase">Impact</h3>
+                <select id="in-urgency" class="select select-xs select-bordered w-full" onchange="sync()">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <div class="flex items-center gap-4 mt-2 text-xs">
+                    <span>Loaner?</span>
+                    <label class="flex items-center gap-1"><input type="radio" name="loaner" value="Yes" onchange="sync()"> Y</label>
+                    <label class="flex items-center gap-1"><input type="radio" name="loaner" value="No" checked onchange="sync()"> N</label>
+                </div>
+            </section>
+
+            <section class="border-t pt-4">
+                <h3 class="text-xs font-bold text-red-600 mb-2 uppercase">IT Admin</h3>
+                <input type="text" id="in-ticket" placeholder="Ticket #" class="input input-sm input-bordered w-full mb-2" oninput="sync()">
+                <select id="in-res-path" class="select select-sm select-bordered w-full" onchange="sync()">
+                    <option value="">Resolution...</option>
+                    <option value="Repair">Repair</option>
+                    <option value="Replacement">Replacement</option>
+                    <option value="Warranty Claim">Warranty Claim</option>
+                </select>
+            </section>
+        </div>
+    </div>
+
+    <!-- Document Preview Panel (Scrollable Background, Centered Doc) -->
+    <div class="flex-grow p-8 bg-slate-500 overflow-y-auto">
+        <div id="pdf-content">
+            <div class="text-center mb-4">
+                <div class="header-title">IT ASSET DAMAGE & FAILURE REPORT</div>
+            </div>
+
+            <div class="mb-4">
+                <span class="section-label">1. General Information</span>
+                <table class="form-table">
+                    <tr>
+                        <td width="20%" class="bg-slate-50 font-bold">COMPANY:</td>
+                        <td id="pv-company" class="text-filled"></td>
+                        <td width="15%" class="bg-slate-50 font-bold">DATE:</td>
+                        <td id="pv-date" width="20%" class="text-filled"></td>
+                    </tr>
+                    <tr>
+                        <td class="bg-slate-50 font-bold">REPORTED BY:</td>
+                        <td id="pv-name" class="text-filled"></td>
+                        <td class="bg-slate-50 font-bold">DEPARTMENT:</td>
+                        <td id="pv-dept" class="text-filled"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="mb-4">
+                <span class="section-label">2. Hardware Identification</span>
+                <table class="form-table">
+                    <tr>
+                        <td width="25%" class="bg-slate-50 font-bold">ASSET ID/TAG:</td>
+                        <td id="pv-asset" class="text-filled"></td>
+                        <td width="25%" class="bg-slate-50 font-bold">DEVICE MODEL:</td>
+                        <td id="pv-model" class="text-filled"></td>
+                    </tr>
+                    <tr>
+                        <td class="bg-slate-50 font-bold">SERIAL NO (S/N):</td>
+                        <td colspan="3" id="pv-sn" class="text-filled"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="mb-4">
+                <span class="section-label">3. Nature of the Issue</span>
+                <div class="grid grid-cols-2 gap-x-10 gap-y-0 px-4 border border-black py-3 text-[9pt]">
+                    <div class="flex justify-between items-center font-bold py-1">Physical Damage <span id="pv-iss-physical" class="text-filled text-lg"></span></div>
+                    <div class="flex justify-between items-center font-bold py-1">Power/Battery <span id="pv-iss-power" class="text-filled text-lg"></span></div>
+                    <div class="flex justify-between items-center font-bold py-1">Connectivity <span id="pv-iss-connect" class="text-filled text-lg"></span></div>
+                    <div class="flex justify-between items-center font-bold py-1">Input/Output <span id="pv-iss-io" class="text-filled text-lg"></span></div>
+                    <div class="flex justify-between items-center font-bold py-1">Printer Specific <span id="pv-iss-printer" class="text-filled text-lg"></span></div>
+                    <div class="flex justify-between items-center font-bold py-1">Software / Performance <span id="pv-iss-soft" class="text-filled text-lg"></span></div>
+                    <div class="col-span-2 mt-2 pt-2 border-t border-dotted border-black font-bold">Other: <span id="pv-other-issue" class="underline-field ml-2"></span></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <span class="section-label">4. Detailed Description & Proof</span>
+                <div class="it-only-label">PROBLEM SUMMARY:</div>
+                <div id="pv-desc" class="description-box mb-3"></div>
+                <div class="it-only-label">IMAGES (MAX 3):</div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="proof-slot" id="slot-0"><span class="text-[7pt] text-slate-300">PHOTO 1</span></div>
+                    <div class="proof-slot" id="slot-1"><span class="text-[7pt] text-slate-300">PHOTO 2</span></div>
+                    <div class="proof-slot" id="slot-2"><span class="text-[7pt] text-slate-300">PHOTO 3</span></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <span class="section-label">5. Impact & Replacement</span>
+                <table class="form-table">
+                    <tr>
+                        <td width="20%" class="bg-slate-50 font-bold">URGENCY:</td>
+                        <td id="pv-urgency" class="text-filled"></td>
+                        <td width="30%" class="bg-slate-50 font-bold">LOANER REQUIRED:</td>
+                        <td id="pv-loaner" class="text-filled"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="p-4 border-2 border-black bg-slate-50 mt-2">
+                <p class="it-only-label">**IT DEPARTMENT USE ONLY**</p>
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <p class="font-bold text-[9.5pt]">TICKET REF: #<span id="pv-ticket" class="underline-field px-4"></span></p>
+                    <p class="font-bold text-[9.5pt]">RESOLUTION: <span id="pv-res-path" class="underline-field px-4"></span></p>
+                </div>
+            </div>
+
+            <div class="footer-line">
+                <div>HQ-IT-F05 Rev.: 00</div>
+                <div>Page: 1 of 1</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+    let imageList = []; 
+
+    // Default Date
+    document.getElementById('in-date').value = new Date().toISOString().split('T')[0];
+
+    async function handleImages(e) {
+        const files = Array.from(e.target.files).slice(0, 3);
+        imageList = [];
+        for(let i=0; i<3; i++) document.getElementById(`slot-${i}`).innerHTML = `<span class="text-[7pt] text-slate-300">PHOTO ${i+1}</span>`;
+        for (let i = 0; i < files.length; i++) {
+            const base64 = await fileToBase64(files[i]);
+            imageList.push(base64);
+            document.getElementById(`slot-${i}`).innerHTML = `<img src="${base64}">`;
+        }
+    }
+
+    function fileToBase64(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+        });
+    }
+
+    function sync() {
+        const fields = ['company', 'name', 'dept', 'asset', 'model', 'sn', 'other-issue', 'desc', 'urgency', 'ticket', 'res-path'];
+        fields.forEach(f => {
+            const inEl = document.getElementById(`in-${f}`);
+            const pvEl = document.getElementById(`pv-${f}`);
+            if (inEl && pvEl) {
+                // Modified to handle auto-caps lock for problem summary via JS as well for the preview text
+                pvEl.innerText = f === 'desc' ? inEl.value.toUpperCase() : inEl.value.toUpperCase();
+            }
+        });
+
+        // Update Char Count
+        const descInput = document.getElementById('in-desc');
+        const charCount = document.getElementById('char-count');
+        charCount.innerText = `${descInput.value.length} / 850`;
+        if(descInput.value.length > 800) charCount.classList.add('text-red-500');
+        else charCount.classList.remove('text-red-500');
+
+        const dVal = document.getElementById('in-date').value;
+        if(dVal) {
+            const [y, m, d] = dVal.split('-');
+            document.getElementById('pv-date').innerText = `${d}/${m}/${y}`;
+        }
+
+        const loanerVal = document.querySelector('input[name="loaner"]:checked')?.value || 'NO';
+        document.getElementById('pv-loaner').innerText = loanerVal.toUpperCase();
+
+        ['physical', 'power', 'connect', 'io', 'printer', 'soft'].forEach(id => {
+            const chk = document.getElementById(`iss-${id}`);
+            const pv = document.getElementById(`pv-iss-${id}`);
+            if (chk && pv) pv.innerText = chk.checked ? '✓' : '[ ]';
+        });
+    }
+
+    async function downloadDirectPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const getT = (id) => document.getElementById(id).value.toUpperCase();
+        const getCheck = (id) => document.getElementById(id).checked ? '4' : '';
+        const greenColor = [31, 172, 75]; // #1fac4b
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text('IT ASSET DAMAGE & FAILURE REPORT', 105, 15, { align: 'center' });
+        doc.line(50, 17, 160, 17);
+
+        doc.setFontSize(10);
+        doc.text('1. GENERAL INFORMATION', 20, 25);
+        doc.autoTable({
+            startY: 28, margin: 20,
+            body: [['COMPANY:', getT('in-company'), 'DATE:', document.getElementById('pv-date').innerText], ['REPORTED BY:', getT('in-name'), 'DEPARTMENT:', getT('in-dept')]],
+            theme: 'grid', styles: { fontSize: 9, cellPadding: 2, fontStyle: 'bold' },
+            columnStyles: { 0: { fillColor: 245, cellWidth: 35 }, 1: { textColor: [185, 28, 28] }, 2: { fillColor: 245, cellWidth: 35 }, 3: { textColor: [185, 28, 28] } }
+        });
+
+        doc.text('2. HARDWARE IDENTIFICATION', 20, doc.lastAutoTable.finalY + 8);
+        doc.autoTable({
+            startY: doc.lastAutoTable.finalY + 11, margin: 20,
+            body: [['ASSET ID / TAG:', getT('in-asset'), 'MODEL:', getT('in-model')], ['SERIAL NO (S/N):', getT('in-sn'), '', '']],
+            theme: 'grid', styles: { fontSize: 9, cellPadding: 2, fontStyle: 'bold' },
+            columnStyles: { 0: { fillColor: 245, cellWidth: 40 }, 1: { textColor: [185, 28, 28] }, 2: { fillColor: 245, cellWidth: 25 }, 3: { textColor: [185, 28, 28] } }
+        });
+
+        const natureY = doc.lastAutoTable.finalY + 8;
+        doc.text('3. NATURE OF THE ISSUE', 20, natureY);
+        doc.autoTable({
+            startY: natureY + 3, margin: 20,
+            body: [
+                ['PHYSICAL DAMAGE', getCheck('iss-physical'), 'POWER / BATTERY', getCheck('iss-power')],
+                ['CONNECTIVITY', getCheck('iss-connect'), 'INPUT / OUTPUT', getCheck('iss-io')],
+                ['PRINTER SPECIFIC', getCheck('iss-printer'), 'SOFTWARE / PERFORMANCE', getCheck('iss-soft')],
+                ['OTHER:', getT('in-other-issue'), '', '']
+            ],
+            theme: 'grid', styles: { fontSize: 9, cellPadding: 2, fontStyle: 'bold' },
+            columnStyles: { 
+                1: { halign: 'center', font: 'ZapfDingbats', fontSize: 13, textColor: [185, 28, 28] }, 
+                3: { halign: 'center', font: 'ZapfDingbats', fontSize: 13, textColor: [185, 28, 28] },
+                2: { cellWidth: 40 }
+            }
+        });
+
+        const descY = doc.lastAutoTable.finalY + 8;
+        doc.text('4. DETAILED DESCRIPTION & PROOF', 20, doc.lastAutoTable.finalY + 8);
+        doc.setFontSize(8);
+        doc.text('PROBLEM SUMMARY:', 20, descY + 5);
+        
+        // Ensure PDF output is uppercase
+        const splitDesc = doc.splitTextToSize(document.getElementById('in-desc').value.toUpperCase(), 165);
+        doc.rect(20, descY + 7, 170, 40);
+        doc.setTextColor(185, 28, 28);
+        doc.text(splitDesc, 22, descY + 12);
+        doc.setTextColor(0);
+
+        const imgY = descY + 52;
+        doc.setFont('helvetica', 'bold');
+        doc.text('IMAGES (MAX 3):', 20, imgY);
+        for(let i=0; i<3; i++) {
+            const x = 20 + (i * 58);
+            doc.rect(x, imgY + 2, 54, 38);
+            if (imageList[i]) {
+                doc.addImage(imageList[i], 'JPEG', x+1, imgY+3, 52, 36, undefined, 'FAST');
+            }
+        }
+
+        const impactY = imgY + 48;
+        doc.setFontSize(10); // Match other section labels
+        doc.text('5. IMPACT & REPLACEMENT', 20, impactY);
+        doc.autoTable({
+            startY: impactY + 3, margin: 20,
+            body: [['URGENCY:', getT('in-urgency'), 'LOANER REQUIRED:', document.querySelector('input[name="loaner"]:checked')?.value.toUpperCase() || 'NO']],
+            theme: 'grid', styles: { fontSize: 9, fontStyle: 'bold', cellPadding: 2 },
+            columnStyles: { 0: { fillColor: 245 }, 1: { textColor: [185, 28, 28] }, 2: { fillColor: 245 }, 3: { textColor: [185, 28, 28] } }
+        });
+
+        const adminY = doc.lastAutoTable.finalY + 8;
+        doc.setLineWidth(0.5);
+        doc.rect(20, adminY, 170, 15);
+        doc.setFontSize(7); doc.text('**IT DEPARTMENT USE ONLY**', 22, adminY + 4);
+        doc.setFontSize(9);
+        doc.text('TICKET REFERENCE: #', 25, adminY + 10);
+        doc.setTextColor(185, 28, 28); doc.text(getT('in-ticket'), 50, adminY + 10);
+        doc.setTextColor(0); doc.text('RESOLUTION:', 110, adminY + 10);
+        doc.setTextColor(185, 28, 28); doc.text(getT('in-res-path'), 135, adminY + 10);
+
+        // Green Footer
+        doc.setDrawColor(greenColor[0], greenColor[1], greenColor[2]);
+        doc.setTextColor(greenColor[0], greenColor[1], greenColor[2]);
+        doc.setLineWidth(0.3); doc.line(20, 280, 190, 280);
+        doc.setFontSize(8); doc.text('HQ-IT-F05 Rev.: 00', 20, 284);
+        doc.text('Page: 1 of 1', 175, 284);
+
+        const reporterName = getT('in-name') || 'ANONYMOUS';
+        doc.save(`${reporterName} - IT Asset Damage & Failure Report.pdf`);
+    }
+    window.onload = sync;
+</script>
+</body>
+</html>
