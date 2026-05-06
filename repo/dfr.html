@@ -133,7 +133,7 @@
 
         .footer-line {
             margin-top: auto;
-            border-top: 1px solid #1fac4b;
+            border-top: 1px solid #808080;
             padding-top: 4px;
             display: flex;
             justify-content: space-between;
@@ -199,7 +199,6 @@
                         <option value="Omnipro Industries Sdn Bhd">
                     </datalist>
                     <input type="text" id="in-name" placeholder="Reported By" class="input input-sm input-bordered w-full" oninput="sync()">
-                    <input type="text" id="in-dept" placeholder="Department" class="input input-sm input-bordered w-full" oninput="sync()">
                     <input type="date" id="in-date" class="input input-sm input-bordered w-full" oninput="sync()">
                 </div>
             </section>
@@ -280,9 +279,7 @@
                     </tr>
                     <tr>
                         <td class="bg-slate-50 font-bold">REPORTED BY:</td>
-                        <td id="pv-name" class="text-filled"></td>
-                        <td class="bg-slate-50 font-bold">DEPARTMENT:</td>
-                        <td id="pv-dept" class="text-filled"></td>
+                        <td colspan="3" id="pv-name" class="text-filled"></td>
                     </tr>
                 </table>
             </div>
@@ -343,7 +340,7 @@
             <div class="p-4 border-2 border-black bg-slate-50 mt-2">
                 <p class="it-only-label">**IT DEPARTMENT USE ONLY**</p>
                 <div class="grid grid-cols-2 gap-4 mt-2">
-                    <p class="font-bold text-[9pt]">TICKET REFERENCE: # <span id="pv-ticket" class="underline-field px-2"></span></p>
+                    <p class="font-bold text-[9pt]">TICKET REFERENCE: #<span id="pv-ticket" class="underline-field px-2"></span></p>
                     <p class="font-bold text-[9pt]">RESOLUTION: <span id="pv-res-path" class="underline-field px-2"></span></p>
                 </div>
             </div>
@@ -398,7 +395,7 @@
     }
 
     function sync() {
-        const fields = ['company', 'name', 'dept', 'asset', 'model', 'sn', 'other-issue', 'desc', 'urgency', 'ticket', 'res-path'];
+        const fields = ['company', 'name', 'asset', 'model', 'sn', 'other-issue', 'desc', 'urgency', 'ticket', 'res-path'];
         fields.forEach(f => {
             const inEl = document.getElementById(`in-${f}`);
             const pvEl = document.getElementById(`pv-${f}`);
@@ -436,6 +433,7 @@
         const getT = (id) => document.getElementById(id).value.toUpperCase();
         const getCheck = (id) => document.getElementById(id).checked ? '4' : '';
         const greenColor = [31, 172, 75]; // #1fac4b
+        const greyColor = [128, 128, 128];
 
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
@@ -446,9 +444,22 @@
         doc.text('1. GENERAL INFORMATION', 20, 25);
         doc.autoTable({
             startY: 28, margin: 20,
-            body: [['COMPANY:', getT('in-company'), 'DATE:', document.getElementById('pv-date').innerText], ['REPORTED BY:', getT('in-name'), 'DEPARTMENT:', getT('in-dept')]],
+            body: [
+                ['COMPANY:', getT('in-company'), 'DATE:', document.getElementById('pv-date').innerText], 
+                ['REPORTED BY:', getT('in-name'), '', '']
+            ],
             theme: 'grid', styles: { fontSize: 9, cellPadding: 2, fontStyle: 'bold' },
-            columnStyles: { 0: { fillColor: 245, cellWidth: 35 }, 1: { textColor: [185, 28, 28] }, 2: { fillColor: 245, cellWidth: 35 }, 3: { textColor: [185, 28, 28] } }
+            columnStyles: { 
+                0: { fillColor: 245, cellWidth: 35 }, 
+                1: { textColor: [185, 28, 28] }, 
+                2: { fillColor: 245, cellWidth: 35 }, 
+                3: { textColor: [185, 28, 28] } 
+            },
+            didParseCell: function(data) {
+                if (data.row.index === 1 && data.column.index === 1) {
+                    data.cell.colSpan = 3;
+                }
+            }
         });
 
         doc.text('2. HARDWARE IDENTIFICATION', 20, doc.lastAutoTable.finalY + 8);
@@ -490,7 +501,7 @@
 
         const imgY = descY + 52;
         doc.setFont('helvetica', 'bold');
-        doc.text('IMAGES (MAX 3):', 20, imgY);
+        doc.text('IMAGES:', 20, imgY);
         for(let i=0; i<3; i++) {
             const x = 20 + (i * 58);
             doc.rect(x, imgY + 2, 54, 38);
@@ -520,7 +531,9 @@
         doc.setTextColor(185, 28, 28); doc.text(getT('in-res-path'), 145, adminY + 10);
 
         // Green Footer
-        doc.setDrawColor(greenColor[0], greenColor[1], greenColor[2]);
+        //doc.setDrawColor(greenColor[0], greenColor[1], greenColor[2]);
+        // Grey Footer
+        doc.setDrawColor(greyColor[0], greyColor[1], greyColor[2]);
         doc.setTextColor(greenColor[0], greenColor[1], greenColor[2]);
         doc.setLineWidth(0.3); doc.line(20, 280, 190, 280);
         doc.setFontSize(8); doc.text('HQ-IT-F05 Rev.: 00', 20, 284);
