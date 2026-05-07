@@ -485,6 +485,15 @@
                 1: { halign: 'center', font: 'ZapfDingbats', fontSize: 13, textColor: [185, 28, 28] }, 
                 3: { halign: 'center', font: 'ZapfDingbats', fontSize: 13, textColor: [185, 28, 28] },
                 2: { cellWidth: 40 }
+            },
+            didParseCell: function(data) {
+                // FIX: Ensure alphanumeric text in row 3 (Other) doesn't use ZapfDingbats
+                if (data.row.index === 3 && data.column.index === 1) {
+                    data.cell.styles.font = 'helvetica';
+                    data.cell.styles.fontSize = 9;
+                    data.cell.colSpan = 3;
+                    data.cell.styles.halign = 'left';
+                }
             }
         });
 
@@ -530,8 +539,6 @@
         doc.setTextColor(0); doc.text('RESOLUTION:', 120, adminY + 10);
         doc.setTextColor(185, 28, 28); doc.text(getT('in-res-path'), 145, adminY + 10);
 
-        // Green Footer
-        //doc.setDrawColor(greenColor[0], greenColor[1], greenColor[2]);
         // Grey Footer
         doc.setDrawColor(greyColor[0], greyColor[1], greyColor[2]);
         doc.setTextColor(greenColor[0], greenColor[1], greenColor[2]);
