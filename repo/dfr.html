@@ -331,7 +331,7 @@
                     <tr>
                         <td width="20%" class="bg-slate-50 font-bold">URGENCY:</td>
                         <td id="pv-urgency" class="text-filled"></td>
-                        <td width="30%" class="bg-slate-50 font-bold">LOANER REQUIRED:</td>
+                        <td width="30%" class="bg-slate-50 font-bold">LOANER DEVICE:</td>
                         <td id="pv-loaner" class="text-filled"></td>
                     </tr>
                 </table>
@@ -524,7 +524,7 @@
         doc.text('5. IMPACT & REPLACEMENT', 20, impactY);
         doc.autoTable({
             startY: impactY + 3, margin: 20,
-            body: [['URGENCY:', getT('in-urgency'), 'LOANER REQUIRED:', document.querySelector('input[name="loaner"]:checked')?.value.toUpperCase() || 'NO']],
+            body: [['URGENCY:', getT('in-urgency'), 'LOANER DEVICE:', document.querySelector('input[name="loaner"]:checked')?.value.toUpperCase() || 'NO']],
             theme: 'grid', styles: { fontSize: 9, fontStyle: 'bold', cellPadding: 2 },
             columnStyles: { 0: { fillColor: 245 }, 1: { textColor: [185, 28, 28] }, 2: { fillColor: 245 }, 3: { textColor: [185, 28, 28] } }
         });
