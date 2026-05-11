@@ -346,7 +346,7 @@
             </div>
 
             <div class="footer-line">
-                <div>HQ-IT-F05 Rev.: 00</div>
+<!--                 <div>HQ-IT-F05 Rev.: 00</div> -->
                 <div>Page: 1 of 1</div>
             </div>
         </div>
@@ -543,10 +543,10 @@
         doc.setDrawColor(greyColor[0], greyColor[1], greyColor[2]);
         doc.setTextColor(greenColor[0], greenColor[1], greenColor[2]);
         doc.setLineWidth(0.3); doc.line(20, 280, 190, 280);
-        doc.setFontSize(8); doc.text('HQ-IT-F05 Rev.: 00', 20, 284);
+        // doc.setFontSize(8); doc.text('HQ-IT-F05 Rev.: 00', 20, 284);
         doc.text('Page: 1 of 1', 175, 284);
 
-        const reporterName = getT('in-name') || 'ANONYMOUS';
+        const reporterName = getT('in-name') || 'NAME';
         doc.save(`${reporterName} - IT Asset Damage & Failure Report.pdf`);
     }
     window.onload = sync;
