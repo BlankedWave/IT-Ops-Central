@@ -62,6 +62,24 @@ A tool to manage incoming IT assets, track configuration, and document deploymen
 
 ---
 
+## 5. 🖥️ IT Asset Damage & Failure Report
+
+A tool to record IT asset damages, hardware failures, and technical incidents while generating structured reports for IT management and audit purposes.
+
+### ✨ Key Features
+
+* **Incident Recording:** Capture asset tag, model, serial number, reporter details, and incident date.
+* **Failure Classification:** Identify hardware, software, network, printer, power, I/O, or physical damage issues.
+* **Detailed Documentation:** Add problem descriptions, impact levels, and supporting remarks for troubleshooting.
+* **Evidence Upload:** Attach up to 3 incident photos directly into the report.
+* **Impact Assessment:** Tracks urgency level and temporary replacement requirements.
+* **IT Resolution Tracking:** Record ticket references, repair actions, replacement decisions, and warranty claims.
+* **Live Preview:** View a real-time A4 report layout before exporting.
+* **Professional PDF Export:** Generates a structured IT Asset Damage & Failure Report for management review and audit documentation.
+* **Efficient UI:** Built with TailwindCSS and DaisyUI, fully responsive and mobile-friendly.
+
+---
+
 ## 💻 Technical Stack (Shared)
 
 Across all tools, the focus was on **zero-dependency portability** and **speed**:
