@@ -99,34 +99,59 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="h-screen overflow-hidden flex flex-col bg-slate-100">
 
-<nav class="fixed top-0 left-0 w-full p-4 z-50">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <a href="../index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 hover:bg-slate-200/70 border border-slate-200 transition-all group shadow-sm">
-            <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
-            <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
-        </a>
-        
-        <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
-            <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">IT Dept</span>
+<header class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+
+        <!-- Left -->
+        <div class="flex items-center gap-3">
+
+            <a href="../index.html"
+               class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center transition-all group">
+
+                <i data-lucide="arrow-left"
+                   class="w-4 h-4 text-slate-700 group-hover:scale-110 transition-transform">
+                </i>
+            </a>
+
+            <div class="leading-tight">
+                <h1 class="text-sm font-black tracking-wide text-slate-800 uppercase">
+                    New Asset Checklist
+                </h1>
+
+                <p class="text-[10px] tracking-widest text-sky-500 font-bold uppercase">
+                    IT Department
+                </p>
+            </div>
+
         </div>
-    </div>
-</nav>
 
-<div class="pt-24"></div>
+        <!-- Right -->
+        <button onclick="downloadDirectPDF()"
+            class="btn btn-sm btn-info text-white shadow-sm hover:shadow-md transition-all">
+
+            <i data-lucide="download" class="w-4 h-4"></i>
+            Download PDF
+
+        </button>
+
+    </div>
+</header>
+
+<div class="h-[72px]"></div>
     
-    <div class="flex flex-col lg:flex-row flex-grow overflow-hidden">
+    <div class="flex flex-col lg:flex-row flex-1 overflow-hidden">
         
         <!-- Sidebar Form Input (Left) -->
-        <div class="w-full lg:w-96 bg-base-100 p-6 overflow-y-auto border-r border-base-300 no-print flex-shrink-0">
+        <div class="w-full lg:w-96 bg-white p-6 overflow-y-auto border-r border-slate-200 no-print flex-shrink-0">
             <div class="flex flex-col gap-4 mb-8">
                 <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">IT Form (New Asset)</h1>
                 <div class="grid grid-cols-1 gap-2">
-                    <button onclick="downloadDirectPDF()" class="btn btn-info text-white w-full shadow-lg hover:brightness-110">
+<!--                     <button onclick="downloadDirectPDF()" class="btn btn-info text-white w-full shadow-lg hover:brightness-110">
                         <i data-lucide="download" class="h-5 w-5 mr-2"></i>
                         Download PDF
-                    </button>
+                    </button> -->
                 </div>
             </div>
 
@@ -239,7 +264,7 @@
         </div>
 
         <!-- Live Preview (Right) -->
-        <div class="flex-grow p-8 bg-slate-300 overflow-y-auto flex justify-center">
+        <div class="flex-1 p-8 bg-slate-400/30 overflow-y-auto flex justify-center">
             <div id="pdf-content">
                 <!-- PDF Header -->
                 <div class="text-center mb-10">
@@ -357,12 +382,12 @@
     <!-- Web Footer Section -->
     <footer class="w-full bg-white border-t border-slate-200 px-8 py-4 no-print">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-bold tracking-widest text-slate-400">
-            <div>
+<!--             <div>
                 © <span id="footer-year"></span> MUHAMMAD AQIL ISMAIL
             </div>
             <div>
                 INTERNAL USE ONLY
-            </div>
+            </div> -->
         </div>
     </footer>
 
