@@ -94,35 +94,51 @@
 <body class="min-h-screen flex flex-col">
 
 <!--Back Button-->
-<nav class="fixed top-0 left-0 w-full p-4 z-50">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <a href="../index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 hover:bg-slate-200/70 border border-slate-200 transition-all group shadow-sm">
-            <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
-            <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
-        </a>
-        
-        <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
-            <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">IT Dept</span>
-        </div>
-    </div>
-</nav>
+<header class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
 
-<div class="pt-24"> 
-</div>
-    
-    <div class="flex flex-col lg:flex-row flex-grow overflow-hidden">
-        
-        <!-- Sidebar Form Input (Left) -->
-        <div class="w-full lg:w-96 bg-base-100 p-6 overflow-y-auto border-r border-base-300 no-print flex-shrink-0">
-            <div class="flex flex-col gap-4 mb-8">
-                <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">IT Form (Resigned Staff)</h1>
-                <div class="grid grid-cols-1 gap-2">
-                    <button onclick="downloadDirectPDF()" class="btn btn-error text-white w-full shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        Download PDF
-                    </button>
-                </div>
+        <!-- Left -->
+        <div class="flex items-center gap-3">
+
+            <div class="p-2 bg-red-500 rounded-lg shadow-sm">
+                <i data-lucide="user-round-minus" class="w-5 h-5 text-white"></i>
             </div>
+
+            <div class="leading-tight">
+                <h1 class="text-sm font-black tracking-wide text-slate-800 uppercase">
+                    Resigned Staff Checklist
+                </h1>
+
+                <p class="text-[10px] tracking-widest text-red-500 font-bold uppercase">
+                    IT Department
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Right -->
+        <button onclick="downloadDirectPDF()"
+            class="btn btn-sm btn-error text-white shadow-sm hover:shadow-md transition-all">
+
+            <i data-lucide="download" class="w-4 h-4"></i>
+            Download PDF
+
+        </button>
+
+    </div>
+</header>
+
+<!-- Spacer (IMPORTANT for fixed navbar) -->
+<div class="h-[72px]"></div>
+
+<div class="flex flex-col lg:flex-row flex-grow overflow-hidden">
+
+    <!-- Sidebar -->
+    <div class="w-full lg:w-96 bg-base-100 p-6 overflow-y-auto border-r border-base-300 no-print flex-shrink-0">
+
+        <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight mb-6">
+            IT Form (Resigned Staff)
+        </h1>
 
             <!-- Editor Accordions -->
             <div class="join join-vertical w-full">
@@ -313,12 +329,12 @@
     <!-- Web Footer Section -->
     <footer class="w-full bg-white border-t border-slate-200 px-8 py-4 no-print">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-bold tracking-widest text-slate-400">
-            <div>
+<!--             <div>
                 © <span id="footer-year"></span> MUHAMMAD AQIL ISMAIL
             </div>
             <div>
                 INTERNAL USE ONLY
-            </div>
+            </div> -->
         </div>
     </footer>
 
