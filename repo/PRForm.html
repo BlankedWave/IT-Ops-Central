@@ -1,3 +1,4 @@
+<!-- Made by Muhammad Aqil 2026 -->
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -151,7 +152,7 @@
 <nav class="fixed top-0 left-0 w-full p-4 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 no-print">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-600 rounded-lg shadow-sm">
+            <div class="p-2 bg-amber-600 rounded-lg shadow-sm">
                 <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
             </div>
             <div>
@@ -172,7 +173,7 @@
             <button onclick="importJSON()" class="btn btn-outline btn-sm px-3 shadow-sm">
                 <i data-lucide="download" class="w-4 h-4 mr-1"></i> Import JSON
             </button>
-            <button onclick="downloadDirectPDF()" class="btn btn-primary btn-sm px-6 shadow-md shadow-blue-500/20 hover:scale-105 transition-transform">
+            <button onclick="downloadDirectPDF()" class="btn btn-warning btn-sm px-6 shadow-md shadow-amber-500/20 hover:scale-105 transition-transform">
                 <i data-lucide="download" class="w-4 h-4 mr-1"></i> Export PDF
             </button>
         </div>
@@ -237,14 +238,14 @@
                 <input type="radio" name="editor-panels" /> 
                 <div class="collapse-title font-bold text-sm bg-slate-50 flex justify-between items-center">
                     <span>Requisition Items</span>
-                    <span class="badge badge-primary badge-sm" id="item-count-badge">0</span>
+                    <span class="badge badge-warning badge-sm" id="item-count-badge">0</span>
                 </div>
                 <div class="collapse-content pt-4 bg-slate-50/50">
                     <div id="items-container" class="space-y-4">
                         <!-- Dynamic items injected here -->
                     </div>
-                    <button onclick="addItem()" class="btn btn-outline btn-primary btn-sm w-full mt-4 border-dashed">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Add Item
+                    <button onclick="addItem()" class="btn btn-outline btn-warning btn-sm w-full mt-4 border-dashed !text-black">
+                        <i data-lucide="plus" class="w-4 h-4 !text-black"></i> Add Item
                     </button>
                 </div>
             </div>
