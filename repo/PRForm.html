@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Purchase Requisition & Authorization Form</title>
-    
+    <link rel="icon" type="image/svg+xml"href="https://api.iconify.design/lucide:file-text.svg">
     <!-- Tailwind CSS & DaisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -866,9 +866,19 @@
 
     function getSignedRoleString() {
         const roles = [];
-        if (document.getElementById('in-sign-verified').value.trim()) roles.push('HOD Signed');
-        if (document.getElementById('in-sign-checked').value.trim()) roles.push('HR/A Signed');
-        if (document.getElementById('in-sign-approved').value.trim()) roles.push('HOC/GM Signed');
+
+        if (signatureData.verified) {
+            roles.push('HOD Signed');
+        }
+
+        if (signatureData.checked) {
+            roles.push('HR_A Signed');
+        }
+
+        if (signatureData.approved) {
+            roles.push('HOC_GM Signed');
+        }
+
         return roles.length ? roles.join('-') : '';
     }
 
