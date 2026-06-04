@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Comparison</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/906/906334.png">
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://unpkg.com/lucide@latest">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js">
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .official-header {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+        }
+
+        .official-border {
+            border: 1px solid #cbd5e1;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            background-color: #f8fafc !important;
+        }
+
+        .company-input {
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+            text-transform: none;
+        }
+
+        /* Vendor header row styling */
+        .vendor-header-row {
+            background-color: #f1f5f9;
+            border-top: 2px solid #cbd5e1;
+        }
+
+        .vendor-header-row td {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        /* Subtotal row styling */
+        .vendor-subtotal-row {
+            background-color: #fafbfc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .vendor-subtotal-row td {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        /* Item row styling */
+        .item-row {
+            background-color: #ffffff;
+        }
+
+        .item-row td {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
+        .item-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .vendor-header-row,
+        .item-row,
+        .vendor-subtotal-row {
+            transition: background-color 0.15s ease;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            padding: 3px;
+            gap: 2px;
+            user-select: none;
+            border: 1px solid #cbd5e1;
+        }
+
+        .toggle-option {
+            position: relative;
+            z-index: 1;
+            padding: 5px 14px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            transition: all 0.25s ease;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .toggle-option.active {
+            color: #ffffff;
+            background-color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-switch:hover {
+            border-color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-900 min-h-screen">
+
+    <!--Back Button-->
+    <nav class="fixed top-0 left-0 w-full p-4 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="../index.html"
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 hover:bg-slate-200/70 border border-slate-200 transition-all group shadow-sm">
+            <i data-lucide="arrow-left" class="w-4 h-4 text-black group-hover:scale-110 transition-transform"></i>
+            <span class="text-xs font-bold tracking-widest text-black uppercase">Back to Hub</span>
+        </a>
+
+        <div class="px-4 py-1 rounded-full bg-sky-500/10 border border-sky-500/20">
+            <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">IT Dept</span>
+        </div>
+    </div>
+</nav>
+
+<div class="pt-24">
+</div>
+
+<!-- Header -->
+<header class="official-header text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="bg-white/10 p-2 rounded border border-white/20">
+                <i data-lucide="file-text" class="text-white w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide uppercase">IT Procurement</h1>
+                <p class="text-[10px] text-slate-400 tracking-[0.2em] uppercase">IT Vendor Price Analysis</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="generatePDF()"
+            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded shadow-sm font-semibold text-sm transition-all active:scale-95">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            Export PDF
+        </button>
+    </div>
+</div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Metadata Section -->
+    <div class="bg-white official-border rounded-sm p-8 mb-8 shadow-sm">
+        <div class="border-l-4 border-slate-800 pl-4 mb-8">
+            <h2 class="text-xl font-bold uppercase tracking-tight text-slate-800">Report Details</h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8">
+            <div class="space-y-2">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Item Name (Default for new
+                items)</label>
+                <input type="text" id="reportTitle" oninput="handleReportTitleChange()" placeholder="INSERT DEFAULT ITEM NAME"
+                class="w-full p-3 bg-slate-50 border border-slate-200 rounded text-sm font-medium" value="">
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Table -->
+    <div class="bg-white official-border rounded-sm shadow-sm overflow-hidden mb-6">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center flex-wrap gap-3">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Comparison Grid</span>
+            <div class="flex items-center gap-3">
+                <!-- Mode Toggle Switch -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Mode:</span>
+                    <div class="toggle-switch" id="modeToggle">
+                        <span class="toggle-option" data-mode="single" onclick="switchMode('single')">Single Item</span>
+                        <span class="toggle-option active" data-mode="multiple" onclick="switchMode('multiple')">Multiple Items</span>
+                    </div>
+                </div>
+                <button id="addButton" onclick="handleAddClick()"
+                class="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-xs font-bold transition-colors">
+                <i data-lucide="plus" class="w-3 h-3"></i> <span id="addButtonText">ADD VENDOR</span>
+            </button>
+        </div>
+    </div>
+
+    <table class="w-full text-left border-collapse" id="comparisonTable">
+        <thead>
+            <tr class="bg-white border-b-2 border-slate-800">
+                <th class="p-4 text-[11px] font-black uppercase w-16 text-center align-middle">No.</th>
+                <th class="p-4 text-[11px] font-black uppercase align-middle">Company Name & Item Description</th>
+                <th class="p-4 text-[11px] font-black uppercase w-32 text-right align-middle">Price (RM)</th>
+                <th class="p-4 text-[11px] font-black uppercase w-28 text-center align-middle">Quantity</th>
+                <th class="p-4 text-[11px] font-black uppercase w-40 text-right align-middle">Total Price (RM)</th>
+                <th class="p-4 text-[11px] font-black uppercase w-12 text-center align-middle"></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y divide-slate-100">
+            <!-- Rows injected here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Real-time Best Price Indicator -->
+<div id="lowestPriceIndicator" class="hidden bg-green-50 border border-green-200 rounded p-4 flex items-center gap-3">
+    <i data-lucide="award" class="text-green-600 w-5 h-5"></i>
+    <span class="text-sm font-bold text-green-800" id="lowestPriceText"></span>
+</div>
+</main>
+
+<script>
+    // ──────────────────────────────────────
+    // MODE MANAGEMENT
+    // ──────────────────────────────────────
+    let currentMode = 'multiple'; // Default: multiple items mode
+
+    // Single mode data
+    let rowCount = 0;
+
+    // Multiple mode data
+    let vendorCount = 0;
+    let vendors = [];
+
+    function init() {
+        lucide.createIcons();
+        // Default: multiple mode with 3 vendors
+        currentMode = 'multiple';
+        updateToggleUI();
+        initMultipleMode();
+        updateLowestPrice();
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
+    }
+
+    function switchMode(newMode) {
+        if (currentMode === newMode) return;
+        currentMode = newMode;
+        updateToggleUI();
+        clearAllData();
+        if (currentMode === 'single') {
+            initSingleMode();
+        } else {
+            initMultipleMode();
+        }
+        updateLowestPrice();
+        updateAddButtonUI();
+    }
+
+    function updateToggleUI() {
+        const options = document.querySelectorAll('#modeToggle .toggle-option');
+        options.forEach(opt => {
+            if (opt.getAttribute('data-mode') === currentMode) {
+                opt.classList.add('active');
+            } else {
+                opt.classList.remove('active');
+            }
+        });
+    }
+
+    function updateAddButtonUI() {
+        const btnText = document.getElementById('addButtonText');
+        if (currentMode === 'single') {
+            btnText.textContent = 'ADD ROW';
+        } else {
+            btnText.textContent = 'ADD VENDOR';
+        }
+    }
+
+    function clearAllData() {
+        rowCount = 0;
+        vendorCount = 0;
+        vendors = [];
+        document.getElementById('tableBody').innerHTML = '';
+    }
+
+    function initSingleMode() {
+        rowCount = 0;
+        for (let i = 0; i < 3; i++) {
+            addRow();
+        }
+        updateLowestPriceSingle();
+    }
+
+    function initMultipleMode() {
+        vendorCount = 0;
+        vendors = [];
+        for (let i = 0; i < 3; i++) {
+            addVendor(true);
+        }
+        renderTable();
+        updateLowestPriceMultiple();
+    }
+
+    function handleAddClick() {
+        if (currentMode === 'single') {
+            addRow();
+        } else {
+            addVendor();
+        }
+    }
+
+    function handleReportTitleChange() {
+        if (currentMode === 'single') {
+            syncItemNames();
+        }
+        // In multiple mode, the report title is only used as default for new items
+        updateLowestPrice();
+    }
+
+    // ──────────────────────────────────────
+    // SINGLE MODE FUNCTIONS (Old Code)
+    // ──────────────────────────────────────
+
+    function syncItemNames() {
+        const title = document.getElementById('reportTitle').value;
+        document.querySelectorAll('.item-input').forEach(input => {
+            input.value = title;
+        });
+        updateLowestPriceSingle();
+    }
+
+    function addRow(data = { company: '', price: 0, qty: 1 }) {
+        rowCount++;
+        const tableBody = document.getElementById('tableBody');
+        const row = document.createElement('tr');
+        row.id = `row-${rowCount}`;
+        row.className = "hover:bg-slate-50 transition-colors";
+
+        const currentItemTitle = document.getElementById('reportTitle').value;
+        const displayPrice = data.price === 0 ? "" : data.price;
+
+        row.innerHTML = `
+                <td class="p-4 text-xs font-bold text-slate-400 text-center">${rowCount}</td>
+                <td class="p-4">
+                    <input type="text" placeholder="INSERT VENDOR NAME HERE" class="company-input w-full bg-transparent font-bold text-slate-900 border-none p-0 focus:ring-0" value="${escapeHTML(data.company)}" oninput="this.value = this.value.toUpperCase(); updateLowestPriceSingle()">
+                    <input type="text" placeholder="INSERT ITEM NAME" class="item-input w-full bg-transparent text-xs text-slate-500 border-none p-0 focus:ring-0 mt-1" value="${escapeHTML(currentItemTitle)}">
+                </td>
+                <td class="p-4 text-right">
+                    <div class="flex items-center justify-end gap-1 px-1 py-1 border border-slate-200 rounded bg-white focus-within:border-blue-500">
+                        <span class="text-[10px] font-bold text-slate-400">RM</span>
+                        <input type="number" step="0.01" placeholder="0.00" class="price-input w-24 bg-transparent border-none text-right text-sm font-mono p-0 focus:ring-0" value="${displayPrice}" oninput="calculateRow(${rowCount})">
+                    </div>
+                </td>
+                <td class="p-4 text-center">
+                    <input type="number" class="qty-input w-16 p-1.5 rounded border border-slate-200 text-center text-sm font-mono" value="${data.qty}" oninput="calculateRow(${rowCount})">
+                </td>
+                <td class="p-4 text-right">
+                    <div class="total-display font-bold text-slate-900 text-sm font-mono">RM ${(data.price * data.qty).toLocaleString('en-MY', {minimumFractionDigits: 2})}</div>
+                </td>
+                <td class="p-4 text-center">
+                    <button onclick="removeRow(${rowCount})" class="text-slate-300 hover:text-red-600">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            `;
+
+        tableBody.appendChild(row);
+        lucide.createIcons();
+    }
+
+    function removeRow(id) {
+        const el = document.getElementById(`row-${id}`);
+        if (el) el.remove();
+        reorderRows();
+        updateLowestPriceSingle();
+    }
+
+    function reorderRows() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach((row, index) => {
+            const firstCell = row.querySelector('td:first-child');
+            if (firstCell) firstCell.innerText = index + 1;
+        });
+        // Also update rowCount
+        rowCount = rows.length;
+    }
+
+    function calculateRow(id) {
+        const row = document.getElementById(`row-${id}`);
+        if (!row) return;
+        const price = parseFloat(row.querySelector('.price-input').value) || 0;
+        const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+        const total = price * qty;
+        const totalDisplay = row.querySelector('.total-display');
+        if (totalDisplay) {
+            totalDisplay.innerText = `RM ${total.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+        }
+        updateLowestPriceSingle();
+    }
+
+    function updateLowestPriceSingle() {
+        let lowest = Infinity;
+        let bestVendors = [];
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(row => {
+            const priceInput = row.querySelector('.price-input');
+            const qtyInput = row.querySelector('.qty-input');
+            const companyInput = row.querySelector('.company-input');
+            if (!priceInput || !qtyInput || !companyInput) return;
+            const price = parseFloat(priceInput.value) || 0;
+            const qty = parseFloat(qtyInput.value) || 0;
+            const total = price * qty;
+            const company = companyInput.value.trim();
+
+            if (total > 0 && company !== "") {
+                if (total < lowest) {
+                    lowest = total;
+                    bestVendors = [company];
+                } else if (total === lowest) {
+                    bestVendors.push(company);
+                }
+            }
+        });
+
+        const indicator = document.getElementById('lowestPriceIndicator');
+        if (bestVendors.length > 0 && lowest !== Infinity) {
+            indicator.classList.remove('hidden');
+            const vendorList = bestVendors.join(", ");
+            document.getElementById('lowestPriceText').innerText =
+                `Best Price: RM ${lowest.toLocaleString('en-MY', {minimumFractionDigits: 2})} by ${vendorList}`;
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+
+    async function generatePDFSingle() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+
+        const reportTitle = document.getElementById('reportTitle').value || 'UNSPECIFIED ITEM';
+        const dateStr = new Date().toLocaleDateString('en-MY', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('PRICE COMPARISON', 14, 20);
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text(`Date: ${dateStr}`, 172, 20);
+
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.8);
+        doc.line(14, 25, 196, 25);
+
+        const rows = [];
+        let lowestPrice = Infinity;
+        let bestVendors = [];
+
+        document.querySelectorAll('#tableBody tr').forEach((tr, index) => {
+            const companyInput = tr.querySelector('.company-input');
+            const company = companyInput ? companyInput.value.trim() : "VENDORS NOT SPECIFIED";
+            const itemInput = tr.querySelector('.item-input');
+            const item = itemInput ? itemInput.value : "ITEM NOT SPECIFIED";
+            const priceInput = tr.querySelector('.price-input');
+            const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+            const qtyInput = tr.querySelector('.qty-input');
+            const qty = qtyInput ? qtyInput.value : 0;
+            const totalVal = price * qty;
+            const totalStr = totalVal.toLocaleString('en-MY', { minimumFractionDigits: 2,
+        maximumFractionDigits: 2 });
+
+            if (totalVal > 0 && company !== "VENDORS NOT SPECIFIED") {
+                if (totalVal < lowestPrice) {
+                    lowestPrice = totalVal;
+                    bestVendors = [company];
+                } else if (totalVal === lowestPrice) {
+                    bestVendors.push(company);
+                }
+            }
+
+            rows.push([
+                { content: index + 1, styles: { halign: 'center', valign: 'top' } },
+                { content: `${company.toUpperCase()}\n${item}\n\nTOTAL`, styles: { valign: 'top' } },
+                { content: `${price.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`,
+                    styles: { halign: 'right', valign: 'top' } },
+                { content: `${qty}`, styles: { halign: 'center', valign: 'top' } },
+                { content: `${totalStr}`, styles: { halign: 'right', valign: 'bottom' } }
+            ]);
+        });
+
+        doc.autoTable({
+            startY: 32,
+            head: [
+                ['NO.', 'COMPANY NAME & ITEM', 'PRICE (RM)', 'QUANTITY', 'TOTAL PRICE (RM)']
+            ],
+            body: rows,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [248, 250, 252],
+                textColor: [0, 0, 0],
+                fontStyle: 'bold',
+                lineWidth: 0.1,
+                lineColor: [0, 0, 0],
+                halign: 'center',
+                valign: 'middle'
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 4,
+                textColor: [0, 0, 0],
+                lineColor: [0, 0, 0],
+                lineWidth: 0.1
+            },
+            columnStyles: {
+                0: { cellWidth: 15 },
+                1: { cellWidth: 'auto' },
+                2: { cellWidth: 32 },
+                3: { cellWidth: 28 },
+                4: { cellWidth: 42, fontStyle: 'bold', halign: 'right', valign: 'bottom' }
+            },
+            didDrawCell: (data) => {
+                if (data.section === 'body' && data.column.index === 1) {
+                    const cell = data.cell;
+                    const textLines = cell.text;
+                    if (textLines && textLines.length > 0) {
+                        doc.setDrawColor(0, 0, 0);
+                        doc.setLineWidth(0.1);
+                        doc.setFillColor(255, 255, 255);
+                        doc.rect(cell.x, cell.y, cell.width, cell.height, 'FD');
+                        const padding = 4;
+                        let currentY = cell.y + padding + 3;
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(textLines[0], cell.x + padding, currentY);
+                        doc.setFont('helvetica', 'normal');
+                        for (let i = 1; i < textLines.length; i++) {
+                            currentY += 4.5;
+                            if (textLines[i]) {
+                                doc.text(textLines[i], cell.x + padding, currentY);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        let finalY = doc.lastAutoTable.finalY + 15;
+        if (finalY > 250) { doc.addPage();
+            finalY = 20; }
+
+        if (bestVendors.length > 0) {
+            doc.setDrawColor(200);
+            doc.setFillColor(245, 247, 250);
+            doc.rect(14, finalY, 182, 12, 'F');
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 41, 59);
+            const vendorList = bestVendors.join(", ").toUpperCase();
+            doc.text(
+                `BEST PRICE: RM ${lowestPrice.toLocaleString('en-MY', {minimumFractionDigits: 2})} BY ${vendorList}`,
+                18, finalY + 8);
+        }
+
+        doc.save(`Price Comparison ${reportTitle.replace(/_/g, ' ') || 'Report'}.pdf`);
+    }
+
+    // ──────────────────────────────────────
+    // MULTIPLE MODE FUNCTIONS (New Code)
+    // ──────────────────────────────────────
+
+    function addVendor(silent = false) {
+        vendorCount++;
+        const defaultItemName = document.getElementById('reportTitle').value || '';
+        const vendor = {
+            id: vendorCount,
+            name: '',
+            items: [{
+                name: defaultItemName,
+                price: 0,
+                qty: 1
+            }]
+        };
+        vendors.push(vendor);
+        if (!silent) {
+            renderTable();
+            updateLowestPriceMultiple();
+        }
+    }
+
+    function addItem(vendorId) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        const defaultItemName = document.getElementById('reportTitle').value || '';
+        vendor.items.push({
+            name: defaultItemName,
+            price: 0,
+            qty: 1
+        });
+        renderTable();
+        updateLowestPriceMultiple();
+    }
+
+    function removeVendor(vendorId) {
+        vendors = vendors.filter(v => v.id !== vendorId);
+        renderTable();
+        updateLowestPriceMultiple();
+    }
+
+    function removeItem(vendorId, itemIndex) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        if (vendor.items.length <= 1) {
+            removeVendor(vendorId);
+            return;
+        }
+        vendor.items.splice(itemIndex, 1);
+        renderTable();
+        updateLowestPriceMultiple();
+    }
+
+    function getVendorSubtotal(vendor) {
+        return vendor.items.reduce((sum, item) => {
+            return sum + ((parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0));
+        }, 0);
+    }
+
+    function renderTable() {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+
+        vendors.forEach((vendor, vendorIndex) => {
+            const vendorNumber = vendorIndex + 1;
+
+            // ── Vendor Header Row ──
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'vendor-header-row';
+            headerRow.setAttribute('data-vendor-id', vendor.id);
+            headerRow.innerHTML = `
+                    <td class="p-4 text-xs font-bold text-slate-600 text-center align-middle">
+                        ${vendorNumber}
+                    </td>
+                    <td class="p-4 align-middle">
+                        <input type="text" placeholder="INSERT VENDOR NAME HERE"
+                            class="company-input w-full bg-transparent font-bold text-slate-900 border-none p-0 focus:ring-0 text-sm"
+                            value="${escapeHTML(vendor.name)}"
+                            oninput="updateVendorName(${vendor.id}, this.value); updateLowestPriceMultiple();">
+                    </td>
+                    <td class="p-4 text-center align-middle" colspan="2">
+                        <button onclick="addItem(${vendor.id})"
+                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-[11px] font-bold transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded border border-blue-200">
+                            <i data-lucide="plus" class="w-3 h-3"></i> ADD ITEM
+                        </button>
+                    </td>
+                    <td class="p-4 text-right align-middle">
+                        <span class="font-bold text-slate-700 text-sm vendor-subtotal-display" id="vendor-subtotal-${vendor.id}">
+                            RM ${getVendorSubtotal(vendor).toLocaleString('en-MY', {minimumFractionDigits: 2})}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center align-middle">
+                        <button onclick="removeVendor(${vendor.id})"
+                            class="text-slate-400 hover:text-red-600 transition-colors"
+                            title="Delete Vendor">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+            tableBody.appendChild(headerRow);
+
+            // ── Item Rows ──
+            vendor.items.forEach((item, itemIndex) => {
+                const itemLetter = String.fromCharCode(97 + itemIndex);
+                const itemNo = `${vendorNumber}${itemLetter}`;
+                const displayPrice = (parseFloat(item.price) || 0) === 0 ? "" : parseFloat(
+                    item.price);
+                const itemTotal = (parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0);
+
+                const itemRow = document.createElement('tr');
+                itemRow.className = 'item-row';
+                itemRow.setAttribute('data-vendor-id', vendor.id);
+                itemRow.setAttribute('data-item-index', itemIndex);
+                itemRow.innerHTML = `
+                        <td class="p-4 text-xs font-medium text-slate-400 text-center align-middle">
+                            ${itemNo}
+                        </td>
+                        <td class="p-4 align-middle">
+                            <input type="text" placeholder="INSERT ITEM NAME"
+                                class="item-input w-full bg-transparent text-xs text-slate-700 border-none p-0 focus:ring-0"
+                                value="${escapeHTML(item.name)}"
+                                oninput="updateItemName(${vendor.id}, ${itemIndex}, this.value);">
+                        </td>
+                        <td class="p-4 text-right align-middle">
+                            <div class="flex items-center justify-end gap-1 px-1 py-1 border border-slate-200 rounded bg-white focus-within:border-blue-500">
+                                <span class="text-[10px] font-bold text-slate-400">RM</span>
+                                <input type="number" step="0.01" placeholder="0.00"
+                                    class="price-input w-24 bg-transparent border-none text-right text-sm font-mono p-0 focus:ring-0"
+                                    value="${displayPrice}"
+                                    oninput="updateItemPrice(${vendor.id}, ${itemIndex}, this.value);">
+                            </div>
+                        </td>
+                        <td class="p-4 text-center align-middle">
+                            <input type="number"
+                                class="qty-input w-16 p-1.5 rounded border border-slate-200 text-center text-sm font-mono"
+                                value="${item.qty}"
+                                oninput="updateItemQty(${vendor.id}, ${itemIndex}, this.value);">
+                        </td>
+                        <td class="p-4 text-right align-middle">
+                            <div class="item-total-display font-medium text-slate-800 text-sm font-mono">
+                                RM ${itemTotal.toLocaleString('en-MY', {minimumFractionDigits: 2})}
+                            </div>
+                        </td>
+                        <td class="p-4 text-center align-middle">
+                            <button onclick="removeItem(${vendor.id}, ${itemIndex})"
+                                class="text-slate-300 hover:text-red-600 transition-colors"
+                                title="Delete Item">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    `;
+                tableBody.appendChild(itemRow);
+            });
+
+            // ── Vendor Subtotal Row ──
+            const subtotalRow = document.createElement('tr');
+            subtotalRow.className = 'vendor-subtotal-row';
+            subtotalRow.setAttribute('data-vendor-id', vendor.id);
+            const vendorSubtotal = getVendorSubtotal(vendor);
+            subtotalRow.innerHTML = `
+                    <td class="p-4 text-center align-middle"></td>
+                    <td class="p-4 align-middle">
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider">SUBTOTAL</span>
+                    </td>
+                    <td class="p-4 text-right align-middle"></td>
+                    <td class="p-4 text-center align-middle"></td>
+                    <td class="p-4 text-right align-middle">
+                        <span class="font-bold text-slate-900 text-sm font-mono" id="vendor-subtotal-bottom-${vendor.id}">
+                            RM ${vendorSubtotal.toLocaleString('en-MY', {minimumFractionDigits: 2})}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center align-middle"></td>
+                `;
+            tableBody.appendChild(subtotalRow);
+        });
+
+        lucide.createIcons();
+    }
+
+    function updateVendorName(vendorId, value) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        vendor.name = value;
+        updateLowestPriceMultiple();
+    }
+
+    function updateItemName(vendorId, itemIndex, value) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        if (vendor.items[itemIndex]) {
+            vendor.items[itemIndex].name = value;
+        }
+    }
+
+    function updateItemPrice(vendorId, itemIndex, value) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        if (vendor.items[itemIndex]) {
+            vendor.items[itemIndex].price = parseFloat(value) || 0;
+        }
+        refreshVendorDisplay(vendorId);
+        updateLowestPriceMultiple();
+    }
+
+    function updateItemQty(vendorId, itemIndex, value) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+        if (vendor.items[itemIndex]) {
+            vendor.items[itemIndex].qty = parseInt(value) || 0;
+        }
+        refreshVendorDisplay(vendorId);
+        updateLowestPriceMultiple();
+    }
+
+    function refreshVendorDisplay(vendorId) {
+        const vendor = vendors.find(v => v.id === vendorId);
+        if (!vendor) return;
+
+        const vendorSubtotal = getVendorSubtotal(vendor);
+        const vendorSubtotalStr = `RM ${vendorSubtotal.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+
+        const headerSubtotalEl = document.getElementById(`vendor-subtotal-${vendorId}`);
+        if (headerSubtotalEl) {
+            headerSubtotalEl.textContent = vendorSubtotalStr;
+        }
+
+        const bottomSubtotalEl = document.getElementById(`vendor-subtotal-bottom-${vendorId}`);
+        if (bottomSubtotalEl) {
+            bottomSubtotalEl.textContent = vendorSubtotalStr;
+        }
+
+        const tableBody = document.getElementById('tableBody');
+        const itemRows = tableBody.querySelectorAll(`tr.item-row[data-vendor-id="${vendorId}"]`);
+        itemRows.forEach(row => {
+            const itemIndex = parseInt(row.getAttribute('data-item-index'));
+            if (vendor.items[itemIndex]) {
+                const item = vendor.items[itemIndex];
+                const itemTotal = (parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0);
+                const totalDisplay = row.querySelector('.item-total-display');
+                if (totalDisplay) {
+                    totalDisplay.textContent =
+                        `RM ${itemTotal.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+                }
+            }
+        });
+    }
+
+    function updateLowestPriceMultiple() {
+        let lowest = Infinity;
+        let bestVendors = [];
+
+        vendors.forEach(vendor => {
+            const vendorSubtotal = getVendorSubtotal(vendor);
+            const vendorName = vendor.name.trim();
+
+            if (vendorSubtotal > 0 && vendorName !== "") {
+                if (vendorSubtotal < lowest) {
+                    lowest = vendorSubtotal;
+                    bestVendors = [vendorName];
+                } else if (vendorSubtotal === lowest) {
+                    bestVendors.push(vendorName);
+                }
+            }
+        });
+
+        const indicator = document.getElementById('lowestPriceIndicator');
+        if (bestVendors.length > 0 && lowest !== Infinity) {
+            indicator.classList.remove('hidden');
+            const vendorList = bestVendors.join(", ");
+            document.getElementById('lowestPriceText').innerText =
+                `Best Price: RM ${lowest.toLocaleString('en-MY', {minimumFractionDigits: 2})} by ${vendorList}`;
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+
+    async function generatePDFMultiple() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+
+        const reportTitle = document.getElementById('reportTitle').value || 'UNSPECIFIED ITEM';
+        const dateStr = new Date().toLocaleDateString('en-MY', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('PRICE COMPARISON', 14, 20);
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text(`Date: ${dateStr}`, 172, 20);
+
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.8);
+        doc.line(14, 25, 196, 25);
+
+        const rows = [];
+        let lowestPrice = Infinity;
+        let bestVendors = [];
+
+        vendors.forEach((vendor, vendorIndex) => {
+            const vendorNumber = vendorIndex + 1;
+            const vendorName = vendor.name.trim() || `VENDOR ${vendorNumber}`;
+            const vendorSubtotal = getVendorSubtotal(vendor);
+
+            if (vendorSubtotal > 0 && vendor.name.trim() !== "") {
+                if (vendorSubtotal < lowestPrice) {
+                    lowestPrice = vendorSubtotal;
+                    bestVendors = [vendorName];
+                } else if (vendorSubtotal === lowestPrice) {
+                    bestVendors.push(vendorName);
+                }
+            }
+
+            // Vendor header row in PDF
+            rows.push([
+                { content: `${vendorNumber}`, styles: { halign: 'center', valign: 'middle',
+                        fontStyle: 'bold', fontSize: 10, fillColor: [241, 245, 249] } },
+                { content: `${vendorName.toUpperCase()}`, styles: { valign: 'middle', fontStyle: 'bold',
+                        fontSize: 10, fillColor: [241, 245, 249] } },
+                { content: '', styles: { fillColor: [241, 245, 249] } },
+                { content: '', styles: { fillColor: [241, 245, 249] } },
+                { content: '', styles: { fillColor: [241, 245, 249] } },
+            ]);
+
+            // Item rows
+            vendor.items.forEach((item, itemIndex) => {
+                const itemLetter = String.fromCharCode(97 + itemIndex);
+                const itemNo = `${vendorNumber}${itemLetter}`;
+                const itemName = item.name || 'ITEM NOT SPECIFIED';
+                const price = parseFloat(item.price) || 0;
+                const qty = parseInt(item.qty) || 0;
+                const itemTotal = price * qty;
+
+                rows.push([
+                    { content: itemNo, styles: { halign: 'center', valign: 'top',
+                            fontStyle: 'normal' } },
+                    { content: itemName, styles: { valign: 'top' } },
+                    { content: `${price.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`,
+                        styles: { halign: 'right', valign: 'top' } },
+                    { content: `${qty}`, styles: { halign: 'center', valign: 'top' } },
+                    { content: `${itemTotal.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`,
+                        styles: { halign: 'right', valign: 'top' } },
+                ]);
+            });
+
+            // Subtotal row
+            rows.push([
+                { content: '', styles: { fillColor: [250, 251, 252] } },
+                { content: `SUBTOTAL`,
+                    styles: { fontStyle: 'bold', fontSize: 8, fillColor: [250, 251, 252],
+                        textColor: [100, 116, 139] } },
+                { content: '', styles: { fillColor: [250, 251, 252] } },
+                { content: '', styles: { fillColor: [250, 251, 252] } },
+                { content: `${vendorSubtotal.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`,
+                    styles: { halign: 'right', fontStyle: 'bold', fillColor: [250, 251, 252],
+                        textColor: [0, 0, 0] } },
+            ]);
+        });
+
+        doc.autoTable({
+            startY: 32,
+            head: [
+                ['NO.', 'COMPANY NAME & ITEM', 'PRICE (RM)', 'QUANTITY', 'TOTAL PRICE (RM)']
+            ],
+            body: rows,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [248, 250, 252],
+                textColor: [0, 0, 0],
+                fontStyle: 'bold',
+                lineWidth: 0.1,
+                lineColor: [0, 0, 0],
+                halign: 'center',
+                valign: 'middle'
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 4,
+                textColor: [0, 0, 0],
+                lineColor: [0, 0, 0],
+                lineWidth: 0.1
+            },
+            columnStyles: {
+                0: { cellWidth: 18 },
+                1: { cellWidth: 'auto' },
+                2: { cellWidth: 32 },
+                3: { cellWidth: 28 },
+                4: { cellWidth: 42, fontStyle: 'bold', halign: 'right' }
+            },
+            didDrawCell: (data) => {
+                if (data.section === 'body') {
+                    const rowData = rows[data.row.index];
+                    if (rowData && rowData[0] && rowData[0].styles && rowData[0].styles
+                        .fillColor) {
+                        const fillColor = rowData[0].styles.fillColor;
+                        if (fillColor[0] === 241 && fillColor[1] === 245 && fillColor[2] === 249) {
+                            doc.setDrawColor(203, 213, 225);
+                            doc.setLineWidth(0.4);
+                            doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data
+                                .cell.y);
+                        }
+                    }
+                }
+            }
+        });
+
+        let finalY = doc.lastAutoTable.finalY + 15;
+        if (finalY > 250) {
+            doc.addPage();
+            finalY = 20;
+        }
+
+        if (bestVendors.length > 0) {
+            doc.setDrawColor(200);
+            doc.setFillColor(245, 247, 250);
+            doc.rect(14, finalY, 182, 12, 'F');
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 41, 59);
+            const vendorList = bestVendors.join(", ").toUpperCase();
+            doc.text(
+                `BEST PRICE: RM ${lowestPrice.toLocaleString('en-MY', {minimumFractionDigits: 2})} BY ${vendorList}`,
+                18, finalY + 8);
+        }
+
+        doc.save(`Price Comparison ${reportTitle.replace(/_/g, ' ') || 'Report'}.pdf`);
+    }
+
+    // ──────────────────────────────────────
+    // UNIFIED FUNCTIONS
+    // ──────────────────────────────────────
+
+    function updateLowestPrice() {
+        if (currentMode === 'single') {
+            updateLowestPriceSingle();
+        } else {
+            updateLowestPriceMultiple();
+        }
+    }
+
+    function generatePDF() {
+        if (currentMode === 'single') {
+            generatePDFSingle();
+        } else {
+            generatePDFMultiple();
+        }
+    }
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // ── Initialize ──
+    window.onload = init;
+</script>
+
+<!-- Footer -->
+<footer class="official-header text-white mt-16">
+    <div class="max-w-6xl mx-auto px-6 py-6 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+            <div class="text-slate-500">
+                © <span id="footerYear"></span> Muhammad Aqil Ismail
+            </div>
+            <div class="text-slate-400 uppercase tracking-widest">
+                Internal Use Only
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
