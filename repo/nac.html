@@ -385,7 +385,38 @@
             </div> -->
         </div>
     </footer>
+    <script>
+  // 1. Disable Right-Click (Context Menu)
+  document.addEventListener('contextmenu', event => event.preventDefault());
 
+  // 2. Disable Developer Tools Keyboard Shortcuts
+  document.onkeydown = function(e) {
+    // Block F12
+    if (e.keyCode === 123) {
+      return false;
+    }
+    
+    // Block Ctrl+Shift+I or Cmd+Option+I (Inspect Element)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'i') {
+      return false;
+    }
+    
+    // Block Ctrl+Shift+C or Cmd+Option+C (Element Selector)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+      return false;
+    }
+    
+    // Block Ctrl+U or Cmd+Option+U (View Source)
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
+      return false;
+    }
+    
+    // Block Ctrl+S or Cmd+S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      return false;
+    }
+  };
+</script>
     <script>
         lucide.createIcons();
 
